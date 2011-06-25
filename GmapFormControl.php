@@ -1,11 +1,15 @@
 <?php
 
 use Nette\Utils\Html,
- Nette\Utils\Strings;
+ Nette\Utils\Strings,
+ \Nette\Templating\FileTemplate;
 
 /**
  * GmapFormControl
  * @author Jakub Jarabica (http://www.jam3son.sk)
+ * 
+ * @property-read string $template
+ * 
  */
 final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
 
@@ -20,6 +24,9 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         'center' => array(0, 0),
         'zoom' => 2,
     );
+    
+    /** @var FileTemplate */
+    private $template;
 
     /**
      * Form container extension method. Do not call directly.
@@ -45,6 +52,12 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         }
         $this->container = Html::el('div');
         $this->separator = Html::el('br');
+        
+        $this->template = dirname(__FILE__).'/template.latte';
+    }
+    
+    public function setTemplate($template) {
+        $this->template = $template;
     }
 
     public function getValue() {
