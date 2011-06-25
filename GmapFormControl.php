@@ -12,14 +12,17 @@ use Nette\Utils\Html,
  * 
  */
 final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
+    
+    const LATITUDE = 'latitude';
+    const LONGITUDE = 'longitude';
 
     /** @var array  default map options */
     private $options = array(
         'width' => 300,
         'height' => 300,
         'center' => array(
-            'latitude' => 0,
-            'longitude' => 0,
+            self::LATITUDE => 0,
+            self::LONGITUDE => 0,
         ),
         'zoom' => 2,
     );
@@ -66,21 +69,21 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
 
         /* create latitude input */
         $latitude = clone $original;
-        $latitude->name .= '[latitude]';
-        $latitude->id = $id . '-latitude';
-        $latitude->value = $this->value['latitude'];
+        $latitude->name .= '['.self::LATITUDE.']';
+        $latitude->id = $id . '-'.self::LATITUDE;
+        $latitude->value = $this->value[self::LATITUDE];
 
         /* create longitude input */
         $longitude = clone $original;
-        $longitude->name .= '[longitude]';
-        $longitude->id = $id . '-longitude';
-        $longitude->value = $this->value['longitude'];
+        $longitude->name .= '['.self::LONGITUDE.']';
+        $longitude->id = $id . '-'.self::LONGITUDE;
+        $longitude->value = $this->value[self::LONGITUDE];
 
         if ($this->getValue() === NULL) {
-            if (!isset($this->options['center']['latitude'])) { // allows simpler central point array
+            if (!isset($this->options['center'][self::LATITUDE])) { // allows simpler central point array
                 $center = array(
-                    'latitude' => $this->options['center'][0],
-                    'longitude' => $this->options['center'][1],
+                    self::LATITUDE => $this->options['center'][0],
+                    self::LONGITUDE => $this->options['center'][1],
                 );
             } else {
                 $center = $this->options['center'];
