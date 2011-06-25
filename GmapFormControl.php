@@ -13,8 +13,6 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
     protected $separator;
     /** @var Html  container element template */
     protected $container;
-    /** @var array */
-    private $coords = array('latitude', 'longitude');
     /** @var array  default map options */
     private $options = array(
         'width' => 300,
@@ -70,7 +68,7 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         $values = $this->value === NULL ? NULL : (array) $this->getValue();
         $label = /* Nette\Web\ */Html::el('label');
 
-        foreach ($this->coords as $coord) {
+        foreach (array('latitude', 'longitude') as $coord) {
             $control = clone $original;
             $control->name .= '[' . $coord . ']';
             $control->id = $label->for = $id . '-' . $coord;
