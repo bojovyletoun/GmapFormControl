@@ -9,9 +9,9 @@ use Nette\Utils\Html,
  */
 final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
 
-    /** @var Nette\Web\Html  separator element template */
+    /** @var Html  separator element template */
     protected $separator;
-    /** @var Nette\Web\Html  container element template */
+    /** @var Html  container element template */
     protected $container;
     /** @var array */
     private $coords = array('latitude', 'longitude');
@@ -32,7 +32,7 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
      * @param array $options 
      * @return GmapFormControl
      */
-    public static function addGmapFormControl(\Nette\Forms\Container $form, $name, $label, $options = NULL) {
+    public static function addGmapFormControl(Nette\Forms\Container $form, $name, $label, $options = NULL) {
         return $form[$name] = new self($label, $options);
     }
 
