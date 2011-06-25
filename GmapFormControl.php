@@ -2,7 +2,10 @@
 
 use Nette\Utils\Html,
     Nette\Utils\Strings,
-    \Nette\Templating\FileTemplate;
+    \Nette\Templating\FileTemplate,
+    Nette\Forms\Controls\BaseControl,
+    \Nette\Forms\Container,
+    Nette\Latte\Engine;
 
 /**
  * GmapFormControl
@@ -11,7 +14,7 @@ use Nette\Utils\Html,
  * @property-read string $template
  * 
  */
-final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
+final class GmapFormControl extends BaseControl {
     
     const LATITUDE = 'latitude';
     const LONGITUDE = 'longitude';
@@ -38,7 +41,7 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
      * @param array $options 
      * @return GmapFormControl
      */
-    public static function addGmapFormControl(Nette\Forms\Container $form, $name, $label, $options = NULL) {
+    public static function addGmapFormControl(Container $form, $name, $label, $options = NULL) {
         return $form[$name] = new self($label, $options);
     }
 
@@ -93,7 +96,7 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         }
 
         $template = new FileTemplate($this->template);
-        $template->registerFilter(new Nette\Latte\Engine);
+        $template->registerFilter(new Engine);
 
         $template->latitude = $latitude;
         $template->longitude = $longitude;
