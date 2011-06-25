@@ -1,8 +1,8 @@
 <?php
 
 use Nette\Utils\Html,
- Nette\Utils\Strings,
- \Nette\Templating\FileTemplate;
+    Nette\Utils\Strings,
+    \Nette\Templating\FileTemplate;
 
 /**
  * GmapFormControl
@@ -17,17 +17,19 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
     private $options = array(
         'width' => 300,
         'height' => 300,
-        'center' => array(0, 0),
+        'center' => array(
+            'latitude' => 0,
+            'longitude' => 0,
+        ),
         'zoom' => 2,
     );
-    
     /** @var FileTemplate */
     private $template;
 
     /**
      * Form container extension method. Do not call directly.
      * 	 
-     * @param FormContainer $form
+     * @param Container $form
      * @param string $name
      * @param string $label	
      * @param array $options 
@@ -46,10 +48,10 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         if ($options !== NULL) {
             $this->options = array_merge($this->options, $options);
         }
-        
-        $this->template = dirname(__FILE__).'/template.latte';
+
+        $this->template = dirname(__FILE__) . '/template.latte';
     }
-    
+
     public function setTemplate($template) {
         $this->template = $template;
     }
@@ -60,76 +62,43 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
 
     public function getControl() {
         $original = parent::getControl();
-        $container = Html::el('div');
-        $separator = Html::el('br');
         $id = $original->id;
-        $container->id = "container-" . $id;
-        $values = $this->value === NULL ? NULL : (array) $this->getValue();
-        $label = /* Nette\Web\ */Html::el('label');
 
-        foreach (array('latitude', 'longitude') as $coord) {
-            $control = clone $original;
-            $control->name .= '[' . $coord . ']';
-            $control->id = $label->for = $id . '-' . $coord;
-            $control->value = $this->value[$coord];
-            $label->setText($this->translate($coord));
-            
-            $container->add((string) $label . (string) $control . $separator);
-        }
+        /* create latitude input */
+        $latitude = clone $original;
+        $latitude->name .= '[latitude]';
+        $latitude->id = $id . '-latitude';
+        $latitude->value = $this->value['latitude'];
+
+        /* create longitude input */
+        $longitude = clone $original;
+        $longitude->name .= '[longitude]';
+        $longitude->id = $id . '-longitude';
+        $longitude->value = $this->value['longitude'];
 
         if ($this->getValue() === NULL) {
-            $center = $this->options['center'];
+            if (!isset($this->options['center']['latitude'])) { // allows simpler central point array
+                $center = array(
+                    'latitude' => $this->options['center'][0],
+                    'longitude' => $this->options['center'][1],
+                );
+            } else {
+                $center = $this->options['center'];
+            }
         } else {
             $center = $this->getValue();
         }
 
-        $js = Html::el('script')->type("text/javascript")->setText('$(function() {
-            var $id = "' . $id . '";
-            var map_center = new google.maps.LatLng(' . $this->options['center'][0] . ', ' . $this->options['center'][1] . ');
-            var $container = $("#container-"+$id).css("width", "' . $this->options['width'] . '").css("height", "' . $this->options['height'] . '");
-            var $form = $container.closest("form");
-            var $lat = $("#"+$id+"-latitude").hide();
-            var $long = $("#"+$id+"-longitude").hide();
-            $container.find("label").hide();
-            $form.append($lat);
-            $form.append($long);
-            
-    var myOptions = {
-      zoom: ' . $this->options['zoom'] . ',
-      center: map_center,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    var map = new google.maps.Map(document.getElementById("container-frmmapForm-mapa"),
-        myOptions);
-        var $current_marker = new google.maps.Marker({
-      position: map_center,
-      map: map,
-      draggable: true
-                });
-                google.maps.event.addListener($current_marker, \'dragend\', function(event) {
-        $lat.val(event.latLng.Da);
-        $long.val(event.latLng.Ea);
-        });
-        google.maps.event.addListener(map, \'click\', function(event) {
-        if($current_marker) {
-            $current_marker.setMap(null);
-        }
-        $lat.val(event.latLng.Da);
-        $long.val(event.latLng.Ea);
-      $current_marker = new google.maps.Marker({
-      position: event.latLng,
-      map: map,
-      draggable: true
-                });
-                google.maps.event.addListener($current_marker, \'dragend\', function(event) {
-        $lat.val(event.latLng.Da);
-        $long.val(event.latLng.Ea);
-        });
-            });
-        })');
-        $container->add($js);
+        $template = new FileTemplate($this->template);
+        $template->registerFilter(new Nette\Latte\Engine);
 
-        return $container;
+        $template->latitude = $latitude;
+        $template->longitude = $longitude;
+        $template->options = $this->options;
+        $template->center = $center;
+        $template->control_id = $id;
+
+        return $template;
     }
 
     /**
