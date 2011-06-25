@@ -13,10 +13,6 @@ use Nette\Utils\Html,
  */
 final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
 
-    /** @var Html  separator element template */
-    protected $separator;
-    /** @var Html  container element template */
-    protected $container;
     /** @var array  default map options */
     private $options = array(
         'width' => 300,
@@ -50,8 +46,6 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         if ($options !== NULL) {
             $this->options = array_merge($this->options, $options);
         }
-        $this->container = Html::el('div');
-        $this->separator = Html::el('br');
         
         $this->template = dirname(__FILE__).'/template.latte';
     }
@@ -64,18 +58,10 @@ final class GmapFormControl extends Nette\Forms\Controls\BaseControl {
         return is_array($this->value) ? $this->value : NULL;
     }
 
-    public function getSeparatorPrototype() {
-        return $this->separator;
-    }
-
-    public function getContainerPrototype() {
-        throw new LogicException('Can\'t return container prototype!');
-    }
-
     public function getControl() {
         $original = parent::getControl();
-        $container = $this->container;
-        $separator = $this->separator;
+        $container = Html::el('div');
+        $separator = Html::el('br');
         $id = $original->id;
         $container->id = "container-" . $id;
         $values = $this->value === NULL ? NULL : (array) $this->getValue();
