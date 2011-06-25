@@ -1,0 +1,54 @@
+<div id="{$control_id}-container" class="GMapFormControl">
+    <label for="{$latitude->id}">Latitude:</label>
+    {$latitude}
+    <br />
+    <label for="{$longitude->id}">Longitude:</label>
+    {$longitude}
+</div>
+<script type="text/javascript">
+    $(function() {
+        var map_center = new google.maps.LatLng({$center['latitude']}, {$center['longitude']});
+        var $container = $('#'+{$control_id}+'-container').css("width", "{$options['width']}").css("height", "{$options['height']}");
+        var $form = $container.closest("form");
+        var $lat = $("#"+{$latitude->id}).hide();
+        var $long = $("#"+{$longitude->id}).hide();
+        
+        $container.find("label").hide();
+        $form.append($lat);
+        $form.append($long);
+        
+        var options = {
+          zoom: {$options['zoom']},
+          center: map_center,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        var map = new google.maps.Map(document.getElementById({$control_id}+'-container'), options);
+        var $current_marker = new google.maps.Marker({
+            position: map_center,
+            map: map,
+            draggable: true
+        });
+        google.maps.event.addListener($current_marker, 'dragend', function(event) {
+            $lat.val(event.latLng.Ha);
+            $long.val(event.latLng.Ia);
+        });
+        
+        google.maps.event.addListener(map, 'click', function(event) {
+            if($current_marker) {
+                $current_marker.setMap(null);
+            }
+            $lat.val(event.latLng.Ha);
+            $long.val(event.latLng.Ia);
+                $current_marker = new google.maps.Marker({
+                position: event.latLng,
+                map: map,
+                draggable: true
+            });
+            google.maps.event.addListener($current_marker, 'dragend', function(event) {
+                $lat.val(event.latLng.Ha);
+                $long.val(event.latLng.Ia);
+            });
+        });
+    })
+</script>
