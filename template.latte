@@ -1,3 +1,13 @@
+{**
+ * Default GMapFormControl template
+ *
+ * @param Nette\Web\Html    $latitude   latitude input
+ * @param Nette\Web\Html    $longitude  longitude input
+ * @param string            $control_id unique identifier of current control
+ * @param array             $marker     central point of map
+ * @param array|FALSE       $center     current marker, may be empty
+ * @param array             $options    map options
+ *}
 {block #map}
 <div id="{$control_id}-container" class="GMapFormControl">
     <label for="{$latitude->id}">Latitude:</label>
@@ -36,6 +46,7 @@
                 draggable: true
             });
 
+            // bind form filling when marker is dragged
             google.maps.event.addListener($current_marker, 'dragend', function(event) {
                 $lat.val(event.latLng.Ha);
                 $long.val(event.latLng.Ia);
@@ -46,13 +57,17 @@
             if($current_marker) {
                 $current_marker.setMap(null);
             }
+            
             $lat.val(event.latLng.Ha);
             $long.val(event.latLng.Ia);
-                $current_marker = new google.maps.Marker({
+            
+            $current_marker = new google.maps.Marker({
                 position: event.latLng,
                 map: map,
                 draggable: true
             });
+            
+            // rebind to new marker event
             google.maps.event.addListener($current_marker, 'dragend', function(event) {
                 $lat.val(event.latLng.Ha);
                 $long.val(event.latLng.Ia);

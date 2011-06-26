@@ -1,5 +1,6 @@
 <?php
 
+// uncomment 'use' in order to run it under PHP5.2 non-prefixed
 use Nette\Utils\Html,
     Nette\Utils\Strings,
     \Nette\Templating\FileTemplate,
@@ -16,6 +17,7 @@ use Nette\Utils\Html,
  * 
  */
 final class GmapFormControl extends BaseControl {
+    
     const LATITUDE = 'latitude';
     const LONGITUDE = 'longitude';
 
@@ -29,6 +31,7 @@ final class GmapFormControl extends BaseControl {
         ),
         'zoom' => 2,
     );
+    
     /** @var FileTemplate */
     private $template;
 
@@ -58,6 +61,10 @@ final class GmapFormControl extends BaseControl {
         $this->template = dirname(__FILE__) . '/template.latte';
     }
 
+    /** 
+     *
+     * @param string $template path to template
+     */
     public function setTemplate($template) {
         $this->template = $template;
     }
@@ -66,6 +73,11 @@ final class GmapFormControl extends BaseControl {
         return is_array($this->value) ? $this->value : NULL;
     }
 
+    /**
+     * Generates control's HTML
+     * 
+     * @return FileTemplate
+     */
     public function getControl() {
         $original = parent::getControl();
         $id = $original->id;
@@ -81,7 +93,7 @@ final class GmapFormControl extends BaseControl {
         $longitude->name .= '[' . self::LONGITUDE . ']';
         $longitude->id = $id . '-' . self::LONGITUDE;
         $longitude->value = $this->value[self::LONGITUDE];
-        
+
         $marker = ($this->getValue() === NULL) ? FALSE : $this->getValue();
 
         if (!isset($this->options['center'][self::LATITUDE])) { // allows simpler central point array
