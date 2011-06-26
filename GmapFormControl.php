@@ -16,7 +16,6 @@ use Nette\Utils\Html,
  * 
  */
 final class GmapFormControl extends BaseControl {
-    
     const LATITUDE = 'latitude';
     const LONGITUDE = 'longitude';
 
@@ -73,27 +72,25 @@ final class GmapFormControl extends BaseControl {
 
         /* create latitude input */
         $latitude = clone $original;
-        $latitude->name .= '['.self::LATITUDE.']';
-        $latitude->id = $id . '-'.self::LATITUDE;
+        $latitude->name .= '[' . self::LATITUDE . ']';
+        $latitude->id = $id . '-' . self::LATITUDE;
         $latitude->value = $this->value[self::LATITUDE];
 
         /* create longitude input */
         $longitude = clone $original;
-        $longitude->name .= '['.self::LONGITUDE.']';
-        $longitude->id = $id . '-'.self::LONGITUDE;
+        $longitude->name .= '[' . self::LONGITUDE . ']';
+        $longitude->id = $id . '-' . self::LONGITUDE;
         $longitude->value = $this->value[self::LONGITUDE];
+        
+        $marker = ($this->getValue() === NULL) ? FALSE : $this->getValue();
 
-        if ($this->getValue() === NULL) {
-            if (!isset($this->options['center'][self::LATITUDE])) { // allows simpler central point array
-                $center = array(
-                    self::LATITUDE => $this->options['center'][0],
-                    self::LONGITUDE => $this->options['center'][1],
-                );
-            } else {
-                $center = $this->options['center'];
-            }
+        if (!isset($this->options['center'][self::LATITUDE])) { // allows simpler central point array
+            $center = array(
+                self::LATITUDE => $this->options['center'][0],
+                self::LONGITUDE => $this->options['center'][1],
+            );
         } else {
-            $center = $this->getValue();
+            $center = $this->options['center'];
         }
 
         $template = new FileTemplate($this->template);
@@ -101,6 +98,7 @@ final class GmapFormControl extends BaseControl {
 
         $template->latitude = $latitude;
         $template->longitude = $longitude;
+        $template->marker = $marker;
         $template->options = $this->options;
         $template->center = $center;
         $template->control_id = $id;
