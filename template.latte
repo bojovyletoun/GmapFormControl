@@ -39,12 +39,15 @@
         
         var map = new google.maps.Map(document.getElementById({$control_id}+'-container'), options);
         
-        if($marker) {
-            var $current_marker = new google.maps.Marker({
+        var $current_marker = new google.maps.Marker({
                 position: $map_center,
-                map: map,
+                map: null,
                 draggable: true
             });
+        
+        if($marker) {
+            $current_marker.setPosition($marker);
+            $current_marker.setMap(map);
 
             // bind form filling when marker is dragged
             google.maps.event.addListener($current_marker, 'dragend', function(event) {
@@ -54,24 +57,13 @@
         }
         
         google.maps.event.addListener(map, 'click', function(event) {
-            if($current_marker) {
-                $current_marker.setMap(null);
-            }
-            
+            // reposition current marker when user clicks on map
+            $current_marker.setPosition(event.latLng);
+            $current_marker.setMap(map);
+        
+            // ... and fill latitude and longitude
             $lat.val(event.latLng.Ha);
             $long.val(event.latLng.Ia);
-            
-            $current_marker = new google.maps.Marker({
-                position: event.latLng,
-                map: map,
-                draggable: true
-            });
-            
-            // rebind to new marker event
-            google.maps.event.addListener($current_marker, 'dragend', function(event) {
-                $lat.val(event.latLng.Ha);
-                $long.val(event.latLng.Ia);
-            });
         });
     })
 </script>
