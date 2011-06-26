@@ -70,10 +70,6 @@ final class GmapFormControl extends BaseControl {
         $this->template = ($isPathFull) ? $template : dirname(__FILE__).'/'.$template.'.latte';
     }
 
-    public function getValue() {
-        return is_array($this->value) ? $this->value : NULL;
-    }
-
     /**
      * Generates control's HTML
      * 
