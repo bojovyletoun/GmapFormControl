@@ -11,7 +11,7 @@ use Nette\Utils\Html,
  * GmapFormControl
  * @author Jakub Jarabica (http://www.jam3son.sk)
  * 
- * @property-read string $template
+ * @property-write string $template
  * 
  */
 final class GmapFormControl extends BaseControl {
