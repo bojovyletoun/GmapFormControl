@@ -10,6 +10,7 @@ use Nette\Utils\Html,
 /**
  * GmapFormControl
  * @author Jakub Jarabica (http://www.jam3son.sk)
+ * @license MIT
  * 
  * @property-write string $template
  * 
