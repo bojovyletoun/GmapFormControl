@@ -63,10 +63,11 @@ final class GmapFormControl extends BaseControl {
 
     /** 
      *
-     * @param string $template path to template
+     * @param string    $template path to template
+     * @param bool      is provided path full or relative to this script?
      */
-    public function setTemplate($template) {
-        $this->template = $template;
+    public function setTemplate($template, $isPathFull = FALSE) {
+        $this->template = ($isPathFull) ? $template : dirname(__FILE__).'/'.$template.'.latte';
     }
 
     public function getValue() {
