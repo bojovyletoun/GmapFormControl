@@ -51,8 +51,8 @@
 
             // bind form filling when marker is dragged
             google.maps.event.addListener($current_marker, 'dragend', function(event) {
-                $lat.val(event.latLng.Ha);
-                $long.val(event.latLng.Ia);
+                $lat.val(event.latLng.lat());
+                $long.val(event.latLng.lng());
             });
         }
         
@@ -62,8 +62,8 @@
             $current_marker.setMap(map);
         
             // ... and fill latitude and longitude
-            $lat.val(event.latLng.Ha);
-            $long.val(event.latLng.Ia);
+            $lat.val(event.latLng.lat());
+            $long.val(event.latLng.lng());
         });
     })
 </script>
