@@ -18,8 +18,8 @@ use Nette\Utils\Html,
  */
 final class GmapFormControl extends BaseControl {
     
-    const LATITUDE = 'latitude';
-    const LONGITUDE = 'longitude';
+    const LATITUDE = 0;
+    const LONGITUDE = 1;
 
     /** @var array  default map options */
     private $options = array(

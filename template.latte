@@ -9,62 +9,84 @@
  * @param array             $options    map options
  *}
 {block #map}
-<div id="{$control_id}-container" class="GMapFormControl">
-    <label for="{$latitude->id}">Latitude:</label>
-    {$latitude}
-    <br />
-    <label for="{$longitude->id}">Longitude:</label>
-    {$longitude}
+<div class="GMapFormControl">
+	<input id="{$control_id}-search"><button formnovalidate onclick="geosearch();return false;">Vyhledat místo</button>
+	<div id="{$control_id}-container""></div>
+	<div id="{$control_id}-inputs">
+		<label for="{$latitude->id}">Latitude:</label>
+	{$latitude}
+		<br />
+		<label for="{$longitude->id}">Longitude:</label>
+	{$longitude}
+	</div>
 </div>
 {/block}
 {block #script}
 <script type="text/javascript">
-    $(function() {
-        var $map_center = new google.maps.LatLng({$center['latitude']}, {$center['longitude']});
-        var $marker = {if $marker}new google.maps.LatLng({$marker['latitude']}, {$marker['longitude']}){else}false{/if};
-        var $container = $('#'+{$control_id}+'-container').css("width", "{$options['width']}").css("height", "{$options['height']}");
-        var $form = $container.closest("form");
-        var $lat = $("#"+{$latitude->id}).hide();
-        var $long = $("#"+{$longitude->id}).hide();
-        
-        $container.find("label").hide();
-        $form.append($lat);
-        $form.append($long);
-        
-        var options = {
-          zoom: {$options['zoom']},
-          center: $map_center,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        
-        var map = new google.maps.Map(document.getElementById({$control_id}+'-container'), options);
-        
-        var $current_marker = new google.maps.Marker({
-                position: $map_center,
-                map: null,
-                draggable: true
-            });
-        
-        if($marker) {
-            $current_marker.setPosition($marker);
-            $current_marker.setMap(map);
+	
+	
+	function e(e){
+		return document.getElementById(e);
+	}
 
-            // bind form filling when marker is dragged
-            google.maps.event.addListener($current_marker, 'dragend', function(event) {
-                $lat.val(event.latLng.lat());
-                $long.val(event.latLng.lng());
-            });
-        }
-        
-        google.maps.event.addListener(map, 'click', function(event) {
-            // reposition current marker when user clicks on map
-            $current_marker.setPosition(event.latLng);
-            $current_marker.setMap(map);
-        
-            // ... and fill latitude and longitude
-            $lat.val(event.latLng.lat());
-            $long.val(event.latLng.lng());
-        });
-    })
+		var geocoder=new google.maps.Geocoder;
+		function geosearch() {
+			var address = document.getElementById({$control_id}+"-search").value;
+			geocoder.geocode( { 'address': address, 'region':"cz"}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					map.setCenter(results[0].geometry.location);
+				} else {
+					alert("Geocode was not successful for the following reason: " + status);
+				}
+			});
+		}
+
+
+		var $map_center = new google.maps.LatLng({$center[0]}, {$center[1]});
+		var $marker = {if $marker}new google.maps.LatLng({$marker[0]}, {$marker[1]}){else}false{/if};
+		var $container = e({$control_id}+'-container');
+		
+		$container.style.width={$options['width'].'px'};
+		$container.style.height={$options['height'].'px'};
+		
+
+		var $lat = e({$latitude->id});
+		var $long = e({$longitude->id});
+		e({$control_id}+'-inputs').style.display="none";
+
+		var options = {
+		  zoom: 12,
+		  center: $map_center,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP,
+		  streetViewControl:false,
+		  panControl:false,
+		  zoomControl:false
+		};
+
+		var map = new google.maps.Map($container, options);
+		
+
+		var $current_marker = new google.maps.Marker({
+				position: $map_center,
+				map: null
+		});
+
+		if($marker) {
+			$current_marker.setPosition($marker);
+			$current_marker.setMap(map);
+			map.setCenter($marker);
+		}
+
+		google.maps.event.addListener(map, 'click', function(event) {
+			// reposition current marker when user clicks on map
+			$current_marker.setPosition(event.latLng);
+			$current_marker.setMap(map);
+
+			// ... and fill latitude and longitude
+			$lat.value=(event.latLng.lat());
+			$long.value=(event.latLng.lng());
+		});
+	
+	
 </script>
 {/block}
