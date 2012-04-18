@@ -69,6 +69,7 @@
 		var $current_marker = new google.maps.Marker({
 				position: $map_center,
 				map: null
+				{ifset $icon},icon: {$icon}{/ifset}
 		});
 
 		if($marker) {
